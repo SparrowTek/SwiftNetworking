@@ -2,7 +2,7 @@
 //  Networking.h
 //  Networking
 //
-//  Created by SparrowTek on 3/22/19.
+//  Created by Thomas Rademaker on 3/22/19.
 //  Copyright © 2019 SparrowTek LLC. All rights reserved.
 //
 

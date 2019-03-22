@@ -8,12 +8,36 @@
 
 /* Begin PBXBuildFile section */
 		2EC6D9A8224559D5002FAE94 /* Networking.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EC6D9A6224559D5002FAE94 /* Networking.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2EC6D9B722455D25002FAE94 /* HTTPTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC6D9B122455D25002FAE94 /* HTTPTask.swift */; };
+		2EC6D9B822455D25002FAE94 /* NetworkLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC6D9B222455D25002FAE94 /* NetworkLogger.swift */; };
+		2EC6D9B922455D25002FAE94 /* EndpointType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC6D9B322455D25002FAE94 /* EndpointType.swift */; };
+		2EC6D9BA22455D25002FAE94 /* NetworkRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC6D9B422455D25002FAE94 /* NetworkRouter.swift */; };
+		2EC6D9BB22455D25002FAE94 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC6D9B522455D25002FAE94 /* Reachability.swift */; };
+		2EC6D9BC22455D25002FAE94 /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC6D9B622455D25002FAE94 /* HTTPMethod.swift */; };
+		2EC6D9C222455D7D002FAE94 /* URLParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC6D9BF22455D7D002FAE94 /* URLParameterEncoding.swift */; };
+		2EC6D9C322455D7D002FAE94 /* JSONParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC6D9C022455D7D002FAE94 /* JSONParameterEncoding.swift */; };
+		2EC6D9C422455D7D002FAE94 /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC6D9C122455D7D002FAE94 /* ParameterEncoding.swift */; };
+		2EC6D9C722455D88002FAE94 /* ConcurrentOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC6D9C522455D88002FAE94 /* ConcurrentOperation.swift */; };
+		2EC6D9C822455D88002FAE94 /* QueueManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC6D9C622455D88002FAE94 /* QueueManager.swift */; };
+		2EC6D9CE22455E9B002FAE94 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC6D9CD22455E9B002FAE94 /* Notification.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		2EC6D9A3224559D5002FAE94 /* Networking.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Networking.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EC6D9A6224559D5002FAE94 /* Networking.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Networking.h; sourceTree = "<group>"; };
 		2EC6D9A7224559D5002FAE94 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2EC6D9B122455D25002FAE94 /* HTTPTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPTask.swift; sourceTree = "<group>"; };
+		2EC6D9B222455D25002FAE94 /* NetworkLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkLogger.swift; sourceTree = "<group>"; };
+		2EC6D9B322455D25002FAE94 /* EndpointType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndpointType.swift; sourceTree = "<group>"; };
+		2EC6D9B422455D25002FAE94 /* NetworkRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRouter.swift; sourceTree = "<group>"; };
+		2EC6D9B522455D25002FAE94 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		2EC6D9B622455D25002FAE94 /* HTTPMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
+		2EC6D9BF22455D7D002FAE94 /* URLParameterEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLParameterEncoding.swift; sourceTree = "<group>"; };
+		2EC6D9C022455D7D002FAE94 /* JSONParameterEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONParameterEncoding.swift; sourceTree = "<group>"; };
+		2EC6D9C122455D7D002FAE94 /* ParameterEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterEncoding.swift; sourceTree = "<group>"; };
+		2EC6D9C522455D88002FAE94 /* ConcurrentOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConcurrentOperation.swift; sourceTree = "<group>"; };
+		2EC6D9C622455D88002FAE94 /* QueueManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueueManager.swift; sourceTree = "<group>"; };
+		2EC6D9CD22455E9B002FAE94 /* Notification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,10 +70,54 @@
 		2EC6D9A5224559D5002FAE94 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
+				2EC6D9BE22455D38002FAE94 /* Encoding */,
+				2EC6D9BD22455D34002FAE94 /* Operation */,
+				2EC6D9B022455D0B002FAE94 /* Service */,
+				2EC6D9CF22455E9F002FAE94 /* Extensions */,
 				2EC6D9A6224559D5002FAE94 /* Networking.h */,
 				2EC6D9A7224559D5002FAE94 /* Info.plist */,
 			);
 			path = Networking;
+			sourceTree = "<group>";
+		};
+		2EC6D9B022455D0B002FAE94 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				2EC6D9B322455D25002FAE94 /* EndpointType.swift */,
+				2EC6D9B622455D25002FAE94 /* HTTPMethod.swift */,
+				2EC6D9B122455D25002FAE94 /* HTTPTask.swift */,
+				2EC6D9B222455D25002FAE94 /* NetworkLogger.swift */,
+				2EC6D9B422455D25002FAE94 /* NetworkRouter.swift */,
+				2EC6D9B522455D25002FAE94 /* Reachability.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		2EC6D9BD22455D34002FAE94 /* Operation */ = {
+			isa = PBXGroup;
+			children = (
+				2EC6D9C522455D88002FAE94 /* ConcurrentOperation.swift */,
+				2EC6D9C622455D88002FAE94 /* QueueManager.swift */,
+			);
+			path = Operation;
+			sourceTree = "<group>";
+		};
+		2EC6D9BE22455D38002FAE94 /* Encoding */ = {
+			isa = PBXGroup;
+			children = (
+				2EC6D9C022455D7D002FAE94 /* JSONParameterEncoding.swift */,
+				2EC6D9C122455D7D002FAE94 /* ParameterEncoding.swift */,
+				2EC6D9BF22455D7D002FAE94 /* URLParameterEncoding.swift */,
+			);
+			path = Encoding;
+			sourceTree = "<group>";
+		};
+		2EC6D9CF22455E9F002FAE94 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				2EC6D9CD22455E9B002FAE94 /* Notification.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -95,6 +163,7 @@
 				TargetAttributes = {
 					2EC6D9A2224559D5002FAE94 = {
 						CreatedOnToolsVersion = 10.2;
+						LastSwiftMigration = 1020;
 					};
 				};
 			};
@@ -130,6 +199,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2EC6D9C422455D7D002FAE94 /* ParameterEncoding.swift in Sources */,
+				2EC6D9C322455D7D002FAE94 /* JSONParameterEncoding.swift in Sources */,
+				2EC6D9C722455D88002FAE94 /* ConcurrentOperation.swift in Sources */,
+				2EC6D9B822455D25002FAE94 /* NetworkLogger.swift in Sources */,
+				2EC6D9BA22455D25002FAE94 /* NetworkRouter.swift in Sources */,
+				2EC6D9BC22455D25002FAE94 /* HTTPMethod.swift in Sources */,
+				2EC6D9C822455D88002FAE94 /* QueueManager.swift in Sources */,
+				2EC6D9B722455D25002FAE94 /* HTTPTask.swift in Sources */,
+				2EC6D9CE22455E9B002FAE94 /* Notification.swift in Sources */,
+				2EC6D9BB22455D25002FAE94 /* Reachability.swift in Sources */,
+				2EC6D9B922455D25002FAE94 /* EndpointType.swift in Sources */,
+				2EC6D9C222455D7D002FAE94 /* URLParameterEncoding.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +342,7 @@
 		2EC6D9AC224559D5002FAE94 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -278,6 +360,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.sparrowtek.Networking;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -286,6 +369,7 @@
 		2EC6D9AD224559D5002FAE94 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
