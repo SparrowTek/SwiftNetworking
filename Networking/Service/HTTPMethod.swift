@@ -6,7 +6,7 @@
 //  Copyright © 2019 SparrowTek LLC. All rights reserved.
 //
 
-enum HTTPMethod : String {
+public enum HTTPMethod : String {
     case get = "GET"
     case post = "POST"
     case put = "PUT"

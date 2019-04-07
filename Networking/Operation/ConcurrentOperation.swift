@@ -3,15 +3,15 @@
 //  Avocadough
 //
 //  Created by SparrowTek on 2/10/19.
-//  Copyright © 2019 SparrowTek LLC. All rights reserved.
+//  Copyright © 2019 Avocadough. All rights reserved.
 //
 
 import Foundation
 
 class ConcurrentOperation: Operation {
-
+    
     typealias OperationCompletionHandler = (_ result: Result<Data, NetworkError>) -> Void
-
+    
     var completionHandler: (OperationCompletionHandler)?
     
     private let session: URLSession
@@ -30,7 +30,7 @@ class ConcurrentOperation: Operation {
         
         task = session.dataTask(with: urlRequest) { (data, response, error) in
             guard let httpResponse = response as? HTTPURLResponse else {
-                self.complete(result: .failure(.networkError))
+                self.complete(result: .failure(.networkError(data: nil)))
                 return
             }
             
@@ -51,7 +51,7 @@ class ConcurrentOperation: Operation {
                 default:
                     #warning("handle individual status codes differently")
                     print("error with response status: \(status)")
-                    self.complete(result: .failure(.networkError))
+                    self.complete(result: .failure(.networkError(data: data)))
                 }
             }
         }

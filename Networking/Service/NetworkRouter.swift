@@ -2,8 +2,8 @@
 //  NetworkRouter.swift
 //  Avocadough
 //
-//  Created by Thomas Rademaker on 2/10/19.
-//  Copyright © 2019 SparrowTek LLC. All rights reserved.
+//  Created by SparrowTek on 2/10/19.
+//  Copyright © 2019 Avocadough. All rights reserved.
 //
 
 import Foundation
@@ -14,15 +14,15 @@ public protocol NetworkRouterProtocol: class {
     func cancel(_ uuid: UUID)
 }
 
-public enum NetworkError : String, Error {
-    case encodingFailed = "Parameter encoding failed."
-    case missingURL = "URL is nil."
-    case networkError = "There was a network error"
-    case noStatusCode = "There is no status code from the server"
-    case noData = "no data was recieved from the server"
+public enum NetworkError : Error {
+    case encodingFailed
+    case missingURL
+    case networkError(data: Data?)
+    case noStatusCode
+    case noData
 }
 
-typealias HTTPHeaders = [String:String]
+public typealias HTTPHeaders = [String:String]
 
 public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
     
@@ -45,7 +45,7 @@ public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
             QueueManager.shared.enqueue(operation)
             return uuid
         } catch {
-            completion(.failure(.networkError))
+            completion(.failure(.networkError(data: nil)))
             return UUID()
         }
     }
@@ -78,9 +78,9 @@ public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
                 
                 addAdditionalHeaders(route.headers, request: &request)
                 try configureParameters(bodyParameters: bodyParameters,
-                                             bodyEncoding: bodyEncoding,
-                                             urlParameters: urlParameters,
-                                             request: &request)
+                                        bodyEncoding: bodyEncoding,
+                                        urlParameters: urlParameters,
+                                        request: &request)
             }
             return request
         } catch {
@@ -89,9 +89,9 @@ public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
     }
     
     private func configureParameters(bodyParameters: Parameters?,
-                                         bodyEncoding: ParameterEncoding,
-                                         urlParameters: Parameters?,
-                                         request: inout URLRequest) throws {
+                                     bodyEncoding: ParameterEncoding,
+                                     urlParameters: Parameters?,
+                                     request: inout URLRequest) throws {
         do {
             try bodyEncoding.encode(urlRequest: &request, bodyParameters: bodyParameters, urlParameters: urlParameters)
         } catch {
@@ -110,6 +110,8 @@ public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
 extension NetworkRouter: ReachabilityDelegate {
     func reachabiltyStatusChange(reachabilityStatus status: ReachabiltyStatus) {
         let notificationCenter = NotificationCenter.default
+        
+        #warning("I'm not sure if the notification stuff is needed")
         
         switch status {
         case .notReachable:

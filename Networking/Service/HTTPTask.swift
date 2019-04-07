@@ -6,7 +6,7 @@
 //  Copyright © 2019 SparrowTek LLC. All rights reserved.
 //
 
-enum HTTPTask {
+public enum HTTPTask {
     case request
     
     case requestParameters(bodyParameters: Parameters?,
