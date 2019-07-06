@@ -111,8 +111,6 @@ extension NetworkRouter: ReachabilityDelegate {
     func reachabiltyStatusChange(reachabilityStatus status: ReachabiltyStatus) {
         let notificationCenter = NotificationCenter.default
         
-        #warning("I'm not sure if the notification stuff is needed")
-        
         switch status {
         case .notReachable:
             notificationCenter.post(name: .reachabilityNotReachable, object: nil)

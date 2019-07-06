@@ -29,6 +29,7 @@ class ConcurrentOperation: Operation {
     override func main() {
         
         task = session.dataTask(with: urlRequest) { (data, response, error) in
+            NetworkLogger.log(data: data, response: response, error: error)
             guard let httpResponse = response as? HTTPURLResponse else {
                 self.complete(result: .failure(.networkError(data: nil)))
                 return
@@ -36,7 +37,6 @@ class ConcurrentOperation: Operation {
             
             guard let data = data else {
                 DispatchQueue.main.async {
-                    #warning("Should .failure error be based on `error`?????")
                     self.complete(result: .failure(.noData))
                 }
                 return
@@ -50,7 +50,6 @@ class ConcurrentOperation: Operation {
                     self.complete(result: .success(data))
                 default:
                     #warning("handle individual status codes differently")
-                    print("error with response status: \(status)")
                     self.complete(result: .failure(.networkError(data: data)))
                 }
             }

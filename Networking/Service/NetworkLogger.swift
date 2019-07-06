@@ -2,8 +2,8 @@
 //  NetworkLogger.swift
 //  Avocadough
 //
-//  Created by Thomas Rademaker on 2/10/19.
-//  Copyright © 2019 SparrowTek LLC. All rights reserved.
+//  Created by SparrowTek on 2/10/19.
+//  Copyright © 2019 Avocadough. All rights reserved.
 //
 
 import Foundation
@@ -11,8 +11,8 @@ import Foundation
 struct NetworkLogger {
     static func log(request: URLRequest) {
         
-        print("\n - - - - - - - - - - OUTGOING - - - - - - - - - - \n")
-        defer { print("\n - - - - - - - - - -  END - - - - - - - - - - \n") }
+        log("\n - - - - - - - - - - OUTGOING - - - - - - - - - - \n")
+        defer { log("\n - - - - - - - - - -  END OUTGOING - - - - - - - - - - \n") }
         
         let urlAsString = request.url?.absoluteString ?? ""
         let urlComponents = NSURLComponents(string: urlAsString)
@@ -34,10 +34,56 @@ struct NetworkLogger {
             logOutput += "\n \(NSString(data: body, encoding: String.Encoding.utf8.rawValue) ?? "")"
         }
         
-        print(logOutput)
+        log(logOutput)
     }
     
-    static func log(response: URLResponse) {
-        // TODO: implement log for response
+    static func log(data: Data?, response: URLResponse?, error: Error?) {
+        log("\n - - - - - - - - - - INCOMING - - - - - - - - - - \n")
+        defer { log("\n - - - - - - - - - -  END INCOMING - - - - - - - - - - \n") }
+        
+        guard error == nil else {
+            log("Error \(String(describing: error))")
+            return
+        }
+        
+        guard let response = response else {
+            log("URLResponse is NIL")
+            return
+        }
+        
+        if let httpURLResponse = response as? HTTPURLResponse {
+            let statusCode = httpURLResponse.statusCode
+            let urlAsString = httpURLResponse.url?.absoluteString ?? ""
+            let urlComponents = NSURLComponents(string: urlAsString)
+            
+            let path = "\(urlComponents?.path ?? "")"
+            let query = "\(urlComponents?.query ?? "")"
+            let host = "\(urlComponents?.host ?? "")"
+            
+            var logOutput = """
+            status code: \(statusCode)
+            \(urlAsString) \n\n
+            \(path)?\(query) HTTP/1.1 \n
+            HOST: \(host)\n
+            """
+            for (key,value) in httpURLResponse.allHeaderFields {
+                logOutput += "\(key): \(value) \n"
+            }
+            
+            log(logOutput)
+            
+        } else {
+            log("\n - - - - - - - - - - NOT HTTPURLResponse - - - - - - - - - - \n \(response)")
+        }
+        
+        if let data = data, let prettyPrintedString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
+            log("\(prettyPrintedString)")
+        }
+    }
+    
+    static private func log(_ data: String) {
+        #if DEBUG
+        print(data)
+        #endif
     }
 }
