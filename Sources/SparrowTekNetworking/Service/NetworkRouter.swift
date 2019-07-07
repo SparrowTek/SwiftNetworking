@@ -24,7 +24,6 @@ public enum NetworkError : Error {
 
 public typealias HTTPHeaders = [String:String]
 
-@available(iOS 12.0, *)
 public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
     
     let reachability: Reachability
@@ -108,7 +107,6 @@ public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
     }
 }
 
-@available(iOS 12.0, *)
 extension NetworkRouter: ReachabilityDelegate {
     func reachabiltyStatusChange(reachabilityStatus status: ReachabiltyStatus) {
         let notificationCenter = NotificationCenter.default
