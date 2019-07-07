@@ -19,6 +19,7 @@ protocol ReachabilityDelegate: AnyObject {
     func reachabiltyStatusChange(reachabilityStatus status: ReachabiltyStatus)
 }
 
+@available(iOS 12.0, *)
 class Reachability {
     private let pathMonitor = NWPathMonitor()
     var delegate: ReachabilityDelegate?
