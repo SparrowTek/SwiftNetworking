@@ -29,7 +29,7 @@ public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
     
     let reachability: Reachability
     
-    init() {
+    public init() {
         reachability = Reachability()
         reachability.delegate = self
     }
