@@ -31,16 +31,13 @@ class Reachability {
         
         pathMonitor.pathUpdateHandler = { path in
             if path.status == .satisfied {
-                print("We're connected!")
+                
                 if path.isExpensive {
-                    print("The network is reachable over the WWAN connection")
                     self.delegate?.reachabiltyStatusChange(reachabilityStatus: .reachableWWAN)
                 } else {
-                    print("The network is reachable over the WiFi connection")
                     self.delegate?.reachabiltyStatusChange(reachabilityStatus: .reachableEithernetOrWifi)
                 }
             } else {
-                print("The network is not reachable")
                 self.delegate?.reachabiltyStatusChange(reachabilityStatus: .notReachable)
             }
         }
