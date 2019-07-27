@@ -31,7 +31,10 @@ class ConcurrentOperation: Operation {
         task = session.dataTask(with: urlRequest) { (data, response, error) in
             NetworkLogger.log(data: data, response: response, error: error)
             guard let httpResponse = response as? HTTPURLResponse else {
-                self.complete(result: .failure(.networkError(data: nil)))
+                DispatchQueue.main.async {
+                    self.complete(result: .failure(.networkError(data: nil)))
+                }
+                
                 return
             }
             
