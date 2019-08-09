@@ -4,62 +4,82 @@ This framework is designed to bring a protocol oriented approach and `Operation`
 
 An enum conforming the `EndPointType` protocol is needed to create the endpoints that your app will be using.
 
-Example:
-```
+## EndPointType Example:
+```swift
 enum AuthAPI {
-case signup(email: String)
-case login(email: String, password: String)
-case getData
+    case signup(email: String)
+    case login(email: String, password: String)
+    case getData
 }
 
 extension AuthAPI: EndPointType {
-static let baseURLPath = "https://sparrowtek.com"
+    static let baseURLPath = "https://sparrowtek.com"
 
-var path: String {
-switch self {
-case .signup:
-return "account/signup"
-case .login:
-return "account/login"
-case .getData:
-return "data"
-}
-}
+    var path: String {
+        switch self {
+        case .signup:
+            return "account/signup"
+        case .login:
+            return "account/login"
+        case .getData:
+            return "data"
+        }
+    }
 
-var httpMethod: HTTPMethod {
-switch self {
-case .signup,
-.login,
-return .post
-case .getData:
-return .get
-}
-}
+    var httpMethod: HTTPMethod {
+        switch self {
+            case .signup, .login,
+                return .post
+            case .getData:
+                return .get
+        }
+    }
 
-var task: HTTPTask {
-switch self {
-case .signup(let email):
-return .requestParameters(bodyParameters: ["email" : email],
-bodyEncoding: .jsonEncoding,
-urlParameters: nil)
-case .login(let email, let password):
-return .requestParameters(bodyParameters: ["email" : email,
-"password" : password],
-bodyEncoding: .jsonEncoding,
-urlParameters: nil)
-default:
-return nil
-}
-}
+    var task: HTTPTask {
+        switch self {
+            case .signup(let email):
+                return .requestParameters(bodyParameters: ["email" : email],
+                        bodyEncoding: .jsonEncoding,
+                        urlParameters: nil)
+            case .login(let email, let password):
+                return .requestParameters(bodyParameters: ["email" : email,
+                        "password" : password],
+                        bodyEncoding: .jsonEncoding,
+                        urlParameters: nil)
+            default:
+                return nil
+        }
+    }
 
-var headers: HTTPHeaders? {
-switch self {
-case .signup:
-return ["x-access-token" : "accessToken"]
-default:
-return nil
+    var headers: HTTPHeaders? {
+        switch self {
+            case .signup:
+                return ["x-access-token" : "accessToken"]
+        default:
+            return nil
+        }
+    }
 }
-}
+```
+
+## Sample network request
+```swift
+func signup(email: String) {
+    let router = NetworkRouter<AuthAPI>()
+    router.request(.signup(email: email)) { [weak self] result in
+        switch result {
+            case .success(let data):
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                
+                if let auth = try? decoder.decode(Auth.self, from: data) {
+                    // do something with auth object
+                }
+                
+            case .failure(let error):
+                // handle error
+        }
+    }
 }
 ```
 
