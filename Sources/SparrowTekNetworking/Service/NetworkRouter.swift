@@ -2,8 +2,8 @@
 //  NetworkRouter.swift
 //  Avocadough
 //
-//  Created by SparrowTek on 2/10/19.
-//  Copyright © 2019 Avocadough. All rights reserved.
+//  Created by Thomas Rademaker on 2/10/19.
+//  Copyright © 2019 SparrowTek. All rights reserved.
 //
 
 import Foundation

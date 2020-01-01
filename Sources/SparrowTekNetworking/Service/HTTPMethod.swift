@@ -3,7 +3,7 @@
 //  Avocadough
 //
 //  Created by Thomas Rademaker on 2/10/19.
-//  Copyright © 2019 SparrowTek LLC. All rights reserved.
+//  Copyright © 2019 SparrowTek. All rights reserved.
 //
 
 public enum HTTPMethod : String {

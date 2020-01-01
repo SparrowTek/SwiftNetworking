@@ -2,8 +2,8 @@
 //  URLParameterEncoding.swift
 //  Avocadough
 //
-//  Created by SparrowTek on 2/10/19.
-//  Copyright © 2019 SparrowTek LLC. All rights reserved.
+//  Created by Thomas Rademaker on 2/10/19.
+//  Copyright © 2019 SparrowTek. All rights reserved.
 //
 
 import Foundation
