@@ -7,18 +7,22 @@
 //
 
 import Foundation
+import Combine
 
 public protocol NetworkRouterProtocol: class {
     associatedtype EndPoint: EndPointType
     func request(_ route: EndPoint, completion: @escaping ((_ result: Result<Data, NetworkError>) -> Void)) -> UUID
     func cancel(_ uuid: UUID)
+    
+    // Combine
+    func request<T: Codable>(_ route: EndPoint) -> AnyPublisher<T, Error>
 }
 
 public enum NetworkError : Error {
     case encodingFailed
     case missingURL
     case networkError(data: Data?)
-    case noStatusCode
+    case statusCode
     case noData
 }
 
@@ -105,6 +109,35 @@ public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
             request.setValue(value, forHTTPHeaderField: key)
         }
     }
+}
+
+// MARK: Combine
+extension NetworkRouter {
+    public func request<T: Codable>(_ route: EndPoint) -> AnyPublisher<T, Error> {
+        do {
+            let request = try buildRequest(from: route)
+            NetworkLogger.log(request: request)
+            return sendRequest(request)
+        } catch {
+            return Fail(error: NetworkError.networkError(data: nil))
+                .eraseToAnyPublisher()
+        }
+    }
+    
+    private func sendRequest<T: Codable>(_ urlRequest: URLRequest) -> AnyPublisher<T, Error> {
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+
+            return URLSession.shared.dataTaskPublisher(for: urlRequest)
+            .tryMap { output in
+                guard let response = output.response as? HTTPURLResponse, response.statusCode == 200 else {
+                    throw NetworkError.statusCode
+                }
+                return output.data
+            }
+            .decode(type: T.self, decoder: decoder)
+            .eraseToAnyPublisher()
+        }
 }
 
 extension NetworkRouter: ReachabilityDelegate {
