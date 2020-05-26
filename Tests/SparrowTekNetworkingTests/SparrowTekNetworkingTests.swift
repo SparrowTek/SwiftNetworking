@@ -42,7 +42,7 @@ extension TestAPI: EndPointType {
     static let baseURLPath = "localhost"
     
     var baseURL: URL {
-        guard let url = URL(string: API.baseURLPath) else { fatalError("baseURL not configured.") }
+        guard let url = URL(string: TestAPI.baseURLPath) else { fatalError("baseURL not configured.") }
         return url
     }
     
@@ -58,7 +58,7 @@ extension TestAPI: EndPointType {
     var httpMethod: HTTPMethod {
         switch self {
         case .get,
-             .getWithParameter,
+             .getWithParameter:
              return .get
         case .post,
              .postWithParameter:
