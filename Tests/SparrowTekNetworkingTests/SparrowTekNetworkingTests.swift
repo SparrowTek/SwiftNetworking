@@ -1,4 +1,5 @@
 import XCTest
+import Combine
 @testable import SparrowTekNetworking
 
 final class SparrowTekNetworkingTests: XCTestCase {
@@ -8,8 +9,82 @@ final class SparrowTekNetworkingTests: XCTestCase {
         // results.
 //        XCTAssertEqual(SparrowTekNetworking().text, "Hello, World!")
     }
+    
+    func testGet() {
+        let router = NetworkRouter<TestAPI>()
+        
+        let cancelable: AnyPublisher<TestObject, Error> = router.request(TestAPI.get)
+    }
+    
+    func testPost() {
+        
+    }
 
     static var allTests = [
-        ("testExample", testExample),
+        ("testGet", testGet),
+        ("testPost", testPost),
     ]
+}
+
+struct TestObject: Codable {
+    let name: String
+    let arg2: Int
+}
+
+enum TestAPI {
+    case get
+    case getWithParameter(parameter: String)
+    case post
+    case postWithParameter(parameter: String)
+}
+
+extension TestAPI: EndPointType {
+    static let baseURLPath = "localhost"
+    
+    var baseURL: URL {
+        guard let url = URL(string: API.baseURLPath) else { fatalError("baseURL not configured.") }
+        return url
+    }
+    
+    var path: String {
+        switch self {
+        case .get, .getWithParameter:
+            return "get/"
+        case .post, .postWithParameter:
+            return "post/"
+        }
+    }
+    
+    var httpMethod: HTTPMethod {
+        switch self {
+        case .get,
+             .getWithParameter,
+             return .get
+        case .post,
+             .postWithParameter:
+            return .post
+        }
+    }
+    
+    var task: HTTPTask {
+        switch self {
+        case .get:
+            return .requestParameters(bodyParameters: nil, bodyEncoding: .urlEncoding, urlParameters: nil)
+        case .getWithParameter(let parameter):
+            return .requestParameters(bodyParameters: nil, bodyEncoding: .urlEncoding, urlParameters: ["parameter" : parameter])
+        case .post:
+            return .requestParameters(bodyParameters: nil, bodyEncoding: .jsonEncoding, urlParameters: nil)
+        case .postWithParameter(let parameter):
+            return .requestParameters(bodyParameters: ["parameter" : parameter], bodyEncoding: .jsonEncoding, urlParameters: nil)
+        }
+    }
+    
+    var headers: HTTPHeaders? {
+        switch self {
+//        case .post:
+//            return ["x-access-token" : Key.accessToken]
+        default:
+            return nil
+        }
+    }
 }
