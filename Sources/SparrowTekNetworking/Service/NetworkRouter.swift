@@ -15,7 +15,12 @@ public protocol NetworkRouterProtocol: class {
     func cancel(_ uuid: UUID)
     
     // Combine
-    func request<T: Codable>(_ route: EndPoint) -> AnyPublisher<T, Error>
+    func request<T: ResponseObject>(_ route: EndPoint) -> AnyPublisher<T, Never>
+}
+
+public protocol ResponseObject: Codable {
+    associatedtype T
+    static func emptyImplementation() -> T
 }
 
 public enum NetworkError : Error {
@@ -30,9 +35,17 @@ public typealias HTTPHeaders = [String:String]
 
 public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
     
+    let urlSession: URLSession
     let reachability: Reachability
     
     public init() {
+        urlSession = URLSession(configuration: URLSessionConfiguration.default, delegate: nil, delegateQueue: nil)
+        reachability = Reachability()
+        reachability.delegate = self
+    }
+    
+    public init(with urlSessionDelegate: URLSessionDelegate) {
+        urlSession = URLSession(configuration: URLSessionConfiguration.default, delegate: urlSessionDelegate, delegateQueue: nil)
         reachability = Reachability()
         reachability.delegate = self
     }
@@ -113,31 +126,36 @@ public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
 
 // MARK: Combine
 extension NetworkRouter {
-    public func request<T: Codable>(_ route: EndPoint) -> AnyPublisher<T, Error> {
+    public func request<T: ResponseObject>(_ route: EndPoint) -> AnyPublisher<T, Never> {
         do {
             let request = try buildRequest(from: route)
+            #if DEBUG
             NetworkLogger.log(request: request)
+            #endif
             return sendRequest(request)
         } catch {
-            return Fail(error: NetworkError.networkError(data: nil))
-                .eraseToAnyPublisher()
+            #warning("BIG RED FLAG!! forced unwrapped optional")
+            return Just(T.emptyImplementation() as! T)
+            .eraseToAnyPublisher()
         }
     }
     
-    private func sendRequest<T: Codable>(_ urlRequest: URLRequest) -> AnyPublisher<T, Error> {
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-
-            return URLSession.shared.dataTaskPublisher(for: urlRequest)
+    private func sendRequest<T: ResponseObject>(_ urlRequest: URLRequest) -> AnyPublisher<T, Never> {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        
+        #warning("BIG RED FLAG!! forced unwrapped optional")
+        return urlSession.dataTaskPublisher(for: urlRequest)
             .tryMap { output in
                 guard let response = output.response as? HTTPURLResponse, response.statusCode == 200 else {
                     throw NetworkError.statusCode
                 }
                 return output.data
-            }
-            .decode(type: T.self, decoder: decoder)
-            .eraseToAnyPublisher()
         }
+        .decode(type: T.self, decoder: decoder)
+        .replaceError(with: T.emptyImplementation() as! T)
+            .eraseToAnyPublisher()
+    }
 }
 
 extension NetworkRouter: ReachabilityDelegate {
