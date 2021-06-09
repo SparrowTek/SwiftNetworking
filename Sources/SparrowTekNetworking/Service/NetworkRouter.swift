@@ -10,8 +10,8 @@ import Foundation
 
 public protocol NetworkRouterProtocol: AnyObject {
     associatedtype EndPoint: EndPointType
-    func request(_ route: EndPoint, completion: @escaping ((_ result: Result<Data, NetworkError>) -> Void)) -> UUID
-    func cancel(_ uuid: UUID)
+    @available(iOS 15.0, *)
+    func request(_ route: EndPoint) async throws -> Data
 }
 
 public protocol ResponseObject: Codable {
@@ -33,43 +33,27 @@ public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
     
     let urlSession: URLSession
     let reachability: Reachability
+    let urlSessionTaskDelegate: URLSessionTaskDelegate?
     
-    public init() {
-        urlSession = URLSession(configuration: URLSessionConfiguration.default, delegate: nil, delegateQueue: nil)
-        reachability = Reachability()
-        reachability.delegate = self
-    }
-    
-    public init(with urlSessionDelegate: URLSessionDelegate) {
+    public init(urlSessionDelegate: URLSessionDelegate? = nil, urlSessionTaskDelegate: URLSessionTaskDelegate? = nil) {
         urlSession = URLSession(configuration: URLSessionConfiguration.default, delegate: urlSessionDelegate, delegateQueue: nil)
+        self.urlSessionTaskDelegate = urlSessionTaskDelegate
         reachability = Reachability()
         reachability.delegate = self
     }
     
-    @discardableResult
-    public func request(_ route: EndPoint, completion: @escaping ((_ result: Result<Data, NetworkError>) -> Void)) -> UUID {
-        do {
-            let request = try buildRequest(from: route)
-            NetworkLogger.log(request: request)
-            
-            let uuid = UUID()
-            let operation = ConcurrentOperation(with: request, uuid: uuid)
-            operation.completionHandler = completion
-            QueueManager.shared.enqueue(operation)
-            return uuid
-        } catch {
-            completion(.failure(.networkError(data: nil)))
-            return UUID()
-        }
-    }
-    
-    public func cancel(_ uuid: UUID) {
-        guard let operations = QueueManager.shared.queue.operations as? [ConcurrentOperation] else { return }
-        for operation in operations {
-            if operation.uuid == uuid {
-                operation.cancel()
-                return
-            }
+    #warning("remove the available modifier")
+    @available(iOS 15.0, *)
+    public func request(_ route: EndPoint) async throws -> Data {
+        let request = try buildRequest(from: route)
+        NetworkLogger.log(request: request)
+        let (data, response) = try await urlSession.data(for: request, delegate: urlSessionTaskDelegate)
+        guard let httpResponse = response as? HTTPURLResponse else { throw NetworkError.statusCode }
+        switch httpResponse.statusCode {
+        case 200...299:
+            return data
+        default:
+            throw NetworkError.statusCode
         }
     }
     
