@@ -7,15 +7,11 @@
 //
 
 import Foundation
-import Combine
 
-public protocol NetworkRouterProtocol: class {
+public protocol NetworkRouterProtocol: AnyObject {
     associatedtype EndPoint: EndPointType
     func request(_ route: EndPoint, completion: @escaping ((_ result: Result<Data, NetworkError>) -> Void)) -> UUID
     func cancel(_ uuid: UUID)
-    
-    // Combine
-    func request<T: ResponseObject>(_ route: EndPoint) -> AnyPublisher<T, Never>
 }
 
 public protocol ResponseObject: Codable {
@@ -121,40 +117,6 @@ public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
         for (key, value) in headers {
             request.setValue(value, forHTTPHeaderField: key)
         }
-    }
-}
-
-// MARK: Combine
-extension NetworkRouter {
-    public func request<T: ResponseObject>(_ route: EndPoint) -> AnyPublisher<T, Never> {
-        do {
-            let request = try buildRequest(from: route)
-            #if DEBUG
-            NetworkLogger.log(request: request)
-            #endif
-            return sendRequest(request)
-        } catch {
-            #warning("BIG RED FLAG!! forced unwrapped optional")
-            return Just(T.emptyImplementation() as! T)
-            .eraseToAnyPublisher()
-        }
-    }
-    
-    private func sendRequest<T: ResponseObject>(_ urlRequest: URLRequest) -> AnyPublisher<T, Never> {
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        
-        #warning("BIG RED FLAG!! forced unwrapped optional")
-        return urlSession.dataTaskPublisher(for: urlRequest)
-            .tryMap { output in
-                guard let response = output.response as? HTTPURLResponse, response.statusCode == 200 else {
-                    throw NetworkError.statusCode
-                }
-                return output.data
-        }
-        .decode(type: T.self, decoder: decoder)
-        .replaceError(with: T.emptyImplementation() as! T)
-            .eraseToAnyPublisher()
     }
 }
 
