@@ -2,9 +2,9 @@
 
 This framework is designed to bring a protocol oriented approach and `Operation` to networking with `URLSession`.  
 
-An enum conforming the `EndPointType` protocol is needed to create the endpoints that your app will be using.
+An enum conforming the `EndpointType` protocol is needed to create the endpoints that your app will be using.
 
-## EndPointType Example:
+## EndpointType Example:
 ```swift
 enum AuthAPI {
     case signup(email: String)
@@ -12,7 +12,7 @@ enum AuthAPI {
     case getData
 }
 
-extension AuthAPI: EndPointType {
+extension AuthAPI: EndpointType {
     static let baseURLPath = "https://sparrowtek.com"
 
     var path: String {

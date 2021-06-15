@@ -8,15 +8,15 @@
 
 import Foundation
 
-public protocol NetworkRouterProtocol: AnyObject {
-    associatedtype EndPoint: EndPointType
-    @available(iOS 15.0, *)
-    func request(_ route: EndPoint) async throws -> Data
+public protocol NetworkRouterDelegate: AnyObject {
+    func intercept(_ request: inout URLRequest)
 }
 
-public protocol ResponseObject: Codable {
-    associatedtype T
-    static func emptyImplementation() -> T
+public protocol NetworkRouterProtocol: AnyObject {
+    associatedtype Endpoint: EndpointType
+    var delegate: NetworkRouterDelegate? { get set }
+    @available(iOS 15.0, *)
+    func execute<T: Decodable>(_ route: Endpoint) async throws -> T
 }
 
 public enum NetworkError : Error {
@@ -29,8 +29,9 @@ public enum NetworkError : Error {
 
 public typealias HTTPHeaders = [String:String]
 
-public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
+public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
     
+    public weak var delegate: NetworkRouterDelegate?
     let urlSession: URLSession
     let reachability: Reachability
     let urlSessionTaskDelegate: URLSessionTaskDelegate?
@@ -42,22 +43,25 @@ public class NetworkRouter<EndPoint: EndPointType>: NetworkRouterProtocol {
         reachability.delegate = self
     }
     
-    #warning("remove the available modifier")
     @available(iOS 15.0, *)
-    public func request(_ route: EndPoint) async throws -> Data {
-        let request = try buildRequest(from: route)
+    public func execute<T: Decodable>(_ route: Endpoint) async throws -> T {
+        guard var request = try? buildRequest(from: route) else { throw NetworkError.encodingFailed }
+        delegate?.intercept(&request)
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
         NetworkLogger.log(request: request)
+        
         let (data, response) = try await urlSession.data(for: request, delegate: urlSessionTaskDelegate)
         guard let httpResponse = response as? HTTPURLResponse else { throw NetworkError.statusCode }
         switch httpResponse.statusCode {
         case 200...299:
-            return data
+            return try decoder.decode(T.self, from: data)
         default:
             throw NetworkError.statusCode
         }
     }
     
-    private func buildRequest(from route: EndPoint) throws -> URLRequest {
+    private func buildRequest(from route: Endpoint) throws -> URLRequest {
         
         var request = URLRequest(url: route.baseURL.appendingPathComponent(route.path),
                                  cachePolicy: .reloadIgnoringLocalAndRemoteCacheData,
