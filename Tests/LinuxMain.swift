@@ -1,7 +1,7 @@
 import XCTest
 
-import SparrowTekNetworkingTests
+import NetworkingTests
 
 var tests = [XCTestCaseEntry]()
-tests += SparrowTekNetworkingTests.allTests()
+tests += NetworkingTests.allTests()
 XCTMain(tests)

@@ -1,9 +1,9 @@
 //
-//  Notification.swift
-//  Avocadough
+//  Notification+Network.swift
 //
-//  Created by Thomas Rademaker on 11/18/18.
-//  Copyright © 2018 SparrowTek LLC. All rights reserved.
+//
+//  Created by Thomas Rademaker on 12/20/20.
+//  Copyright © 2020 Barstool Sports. All rights reserved.
 //
 
 import Foundation
@@ -25,5 +25,5 @@ extension Notification.Name {
     
     static var reachabilityReachableWWAN: Notification.Name {
         return .init("Reachability.reachableWWAN")
-    }    
+    }
 }

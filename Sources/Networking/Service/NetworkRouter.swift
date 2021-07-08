@@ -1,9 +1,9 @@
 //
 //  NetworkRouter.swift
-//  Avocadough
 //
-//  Created by Thomas Rademaker on 2/10/19.
-//  Copyright © 2019 SparrowTek. All rights reserved.
+//
+//  Created by Thomas Rademaker on 12/20/20.
+//  Copyright © 2020 Barstool Sports. All rights reserved.
 //
 
 import Foundation
@@ -15,7 +15,7 @@ public protocol NetworkRouterDelegate: AnyObject {
 public protocol NetworkRouterProtocol: AnyObject {
     associatedtype Endpoint: EndpointType
     var delegate: NetworkRouterDelegate? { get set }
-    @available(iOS 15.0, *)
+    @available(iOS 15.0, macOS 12.0, *)
     func execute<T: Decodable>(_ route: Endpoint) async throws -> T
 }
 
@@ -32,18 +32,23 @@ public typealias HTTPHeaders = [String:String]
 public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
     
     public weak var delegate: NetworkRouterDelegate?
-    let urlSession: URLSession
+    let networking: Networking
     let reachability: Reachability
     let urlSessionTaskDelegate: URLSessionTaskDelegate?
     
-    public init(urlSessionDelegate: URLSessionDelegate? = nil, urlSessionTaskDelegate: URLSessionTaskDelegate? = nil) {
-        urlSession = URLSession(configuration: URLSessionConfiguration.default, delegate: urlSessionDelegate, delegateQueue: nil)
+    public init(networking: Networking? = nil, urlSessionDelegate: URLSessionDelegate? = nil, urlSessionTaskDelegate: URLSessionTaskDelegate? = nil) {
+        if let networking = networking {
+            self.networking = networking
+        } else {
+            self.networking = URLSession(configuration: URLSessionConfiguration.default, delegate: urlSessionDelegate, delegateQueue: nil)
+        }
+        
         self.urlSessionTaskDelegate = urlSessionTaskDelegate
         reachability = Reachability()
         reachability.delegate = self
     }
     
-    @available(iOS 15.0, *)
+    @available(iOS 15.0, macOS 12.0, *)
     public func execute<T: Decodable>(_ route: Endpoint) async throws -> T {
         guard var request = try? buildRequest(from: route) else { throw NetworkError.encodingFailed }
         delegate?.intercept(&request)
@@ -51,7 +56,7 @@ public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         NetworkLogger.log(request: request)
         
-        let (data, response) = try await urlSession.data(for: request, delegate: urlSessionTaskDelegate)
+        let (data, response) = try await networking.data(for: request, delegate: urlSessionTaskDelegate)
         guard let httpResponse = response as? HTTPURLResponse else { throw NetworkError.statusCode }
         switch httpResponse.statusCode {
         case 200...299:
@@ -61,7 +66,7 @@ public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
         }
     }
     
-    private func buildRequest(from route: Endpoint) throws -> URLRequest {
+    func buildRequest(from route: Endpoint) throws -> URLRequest {
         
         var request = URLRequest(url: route.baseURL.appendingPathComponent(route.path),
                                  cachePolicy: .reloadIgnoringLocalAndRemoteCacheData,
@@ -73,15 +78,9 @@ public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
             case .request:
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 addAdditionalHeaders(route.headers, request: &request)
-            case .requestParameters(let bodyParameters,
-                                    let bodyEncoding,
-                                    let urlParameters):
-                
+            case .requestParameters(let parameterEncoding):
                 addAdditionalHeaders(route.headers, request: &request)
-                try configureParameters(bodyParameters: bodyParameters,
-                                        bodyEncoding: bodyEncoding,
-                                        urlParameters: urlParameters,
-                                        request: &request)
+                try configureParameters(parameterEncoding: parameterEncoding, request: &request)
             }
             return request
         } catch {
@@ -89,15 +88,8 @@ public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
         }
     }
     
-    private func configureParameters(bodyParameters: Parameters?,
-                                     bodyEncoding: ParameterEncoding,
-                                     urlParameters: Parameters?,
-                                     request: inout URLRequest) throws {
-        do {
-            try bodyEncoding.encode(urlRequest: &request, bodyParameters: bodyParameters, urlParameters: urlParameters)
-        } catch {
-            throw error
-        }
+    private func configureParameters(parameterEncoding: ParameterEncoding, request: inout URLRequest) throws {
+        try parameterEncoding.encode(urlRequest: &request)
     }
     
     private func addAdditionalHeaders(_ additionalHeaders: HTTPHeaders?, request: inout URLRequest) {

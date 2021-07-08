@@ -1,6 +1,4 @@
-# SparrowTekNetworking
-
-This framework is designed to bring a protocol oriented approach and `Operation` to networking with `URLSession`.  
+# Networking
 
 An enum conforming the `EndpointType` protocol is needed to create the endpoints that your app will be using.
 
@@ -62,28 +60,40 @@ extension AuthAPI: EndpointType {
 }
 ```
 
-## Sample network request
+With your `EndpointType` implemented you can make network requests using a Provider class.
+
+## Provider example
+
 ```swift
-func signup(email: String) {
-    let router = NetworkRouter<AuthAPI>()
-    router.request(.signup(email: email)) { [weak self] result in
-        switch result {
-            case .success(let data):
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                
-                if let auth = try? decoder.decode(Auth.self, from: data) {
-                    // do something with auth object
+import Foundation
+import Combine
+
+protocol AuthProviding {
+    var router: NetworkRouter<AuthAPI> { get }
+    
+    func getUser() -> AnyPublisher<User, Never>
+}
+
+class AuthProvider: AuthProviding {
+    var router: NetworkRouter<AuthAPI>
+    
+    init(router: NetworkRouter<AuthAPI>) {
+        self.router = router
+    }
+    
+    func getUser() -> AnyPublisher<User, Never> {
+        do {
+            return try router.execute(AuthAPI.getData)
+                .catch { _ in
+                    return Just(User.emptyImplementation())
                 }
-                
-            case .failure(let error):
-                // handle error
+                .eraseToAnyPublisher()
+        } catch {
+            return Just(User.emptyImplementation())
+                .eraseToAnyPublisher()
         }
     }
 }
 ```
 
-This framework is **Heavily** influenced by  
-- ["Writing a Network Layer in Swift: Protocol-Oriented Approach"](https://medium.com/flawless-app-stories/writing-network-layer-in-swift-protocol-oriented-approach-4fa40ef1f908) by Malcolm Kumwenda  
-- [Building a networking layer with operations](https://williamboles.me/building-a-networking-layer-with-operations/) by William Boles
 

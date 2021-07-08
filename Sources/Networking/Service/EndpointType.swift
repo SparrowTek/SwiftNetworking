@@ -1,9 +1,9 @@
 //
 //  EndpointType.swift
-//  Avocadough
 //
-//  Created by Thomas Rademaker on 2/10/19.
-//  Copyright © 2019 SparrowTek. All rights reserved.
+//
+//  Created by Thomas Rademaker on 12/20/20.
+//  Copyright © 2020 Barstool Sports. All rights reserved.
 //
 
 import Foundation
