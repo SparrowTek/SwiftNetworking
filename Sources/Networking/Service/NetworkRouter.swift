@@ -12,10 +12,15 @@ public protocol NetworkRouterDelegate: AnyObject {
     func intercept(_ request: inout URLRequest)
 }
 
+
+/// Describes the implementation details of a NetworkRouter
+///
+/// ``NetworkRouter`` is the only implementation of this protocol available to the end user, but they can create their own
+/// implementations that can be used for testing for instance.
 public protocol NetworkRouterProtocol: AnyObject {
     associatedtype Endpoint: EndpointType
     var delegate: NetworkRouterDelegate? { get set }
-    @available(iOS 15.0, macOS 12.0, *)
+    @available(iOS 15.0, macOS 10.15, *)
     func execute<T: Decodable>(_ route: Endpoint) async throws -> T
 }
 
@@ -29,6 +34,8 @@ public enum NetworkError : Error {
 
 public typealias HTTPHeaders = [String:String]
 
+
+/// The NetworkRouter is a generic class that has an ``EndpointType`` and it conforms to ``NetworkRouterProtocol``
 public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
     
     public weak var delegate: NetworkRouterDelegate?
@@ -48,7 +55,11 @@ public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
         reachability.delegate = self
     }
     
-    @available(iOS 15.0, macOS 12.0, *)
+    
+    @available(iOS 15.0, macOS 10.15, *)
+    /// This generic method will take a route and return the desired type via a network call
+    /// This method is async and it can throw errors
+    /// - Returns: The generic type is returned
     public func execute<T: Decodable>(_ route: Endpoint) async throws -> T {
         guard var request = try? buildRequest(from: route) else { throw NetworkError.encodingFailed }
         delegate?.intercept(&request)
