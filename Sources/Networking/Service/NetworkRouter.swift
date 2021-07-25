@@ -27,7 +27,7 @@ public protocol NetworkRouterProtocol: AnyObject {
 public enum NetworkError : Error {
     case encodingFailed
     case missingURL
-    case statusCode(data: Data)
+    case statusCode(_ statusCode: StatusCode?, data: Data)
     case noStatusCode
     case noData
 }
@@ -73,7 +73,8 @@ public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
         case 200...299:
             return try decoder.decode(T.self, from: data)
         default:
-            throw NetworkError.statusCode(data: data)
+            let statusCode = StatusCode(rawValue: httpResponse.statusCode)
+            throw NetworkError.statusCode(statusCode, data: data)
         }
     }
     
