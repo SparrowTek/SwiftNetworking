@@ -1,6 +1,7 @@
 import XCTest
 @testable import Networking
 
+@available(iOS 15.0, macOS 9999, *)
 final class NetworkingTests: XCTestCase {
     
     func testBuildRequest() {

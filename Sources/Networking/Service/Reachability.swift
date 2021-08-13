@@ -8,6 +8,7 @@
 
 import Network
 
+@available(iOS 15.0, macOS 9999, *)
 enum ReachabiltyStatus {
     case notReachable
     case unknown
@@ -15,10 +16,12 @@ enum ReachabiltyStatus {
     case reachableWWAN
 }
 
+@available(iOS 15.0, macOS 9999, *)
 protocol ReachabilityDelegate: AnyObject {
     func reachabiltyStatusChange(reachabilityStatus status: ReachabiltyStatus)
 }
 
+@available(iOS 15.0, macOS 9999, *)
 class Reachability {
     private let pathMonitor = NWPathMonitor()
     var delegate: ReachabilityDelegate?
