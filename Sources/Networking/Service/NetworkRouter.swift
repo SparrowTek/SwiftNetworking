@@ -8,7 +8,6 @@
 
 import Foundation
 
-@available(iOS 15.0, macOS 9999, *)
 public protocol NetworkRouterDelegate: AnyObject {
     func intercept(_ request: inout URLRequest)
 }
@@ -18,15 +17,12 @@ public protocol NetworkRouterDelegate: AnyObject {
 ///
 /// ``NetworkRouter`` is the only implementation of this protocol available to the end user, but they can create their own
 /// implementations that can be used for testing for instance.
-@available(iOS 15.0, macOS 9999, *)
 public protocol NetworkRouterProtocol: AnyObject {
     associatedtype Endpoint: EndpointType
     var delegate: NetworkRouterDelegate? { get set }
-    @available(iOS 15.0, macOS 10.15, *)
     func execute<T: Decodable>(_ route: Endpoint) async throws -> T
 }
 
-@available(iOS 15.0, macOS 9999, *)
 public enum NetworkError : Error {
     case encodingFailed
     case missingURL
@@ -35,12 +31,10 @@ public enum NetworkError : Error {
     case noData
 }
 
-@available(iOS 15.0, macOS 9999, *)
 public typealias HTTPHeaders = [String:String]
 
 
 /// The NetworkRouter is a generic class that has an ``EndpointType`` and it conforms to ``NetworkRouterProtocol``
-@available(iOS 15.0, macOS 9999, *)
 public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
     
     public weak var delegate: NetworkRouterDelegate?
@@ -60,8 +54,6 @@ public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
         reachability.delegate = self
     }
     
-    
-    @available(iOS 15.0, macOS 10.15, *)
     /// This generic method will take a route and return the desired type via a network call
     /// This method is async and it can throw errors
     /// - Returns: The generic type is returned
@@ -117,7 +109,6 @@ public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
     }
 }
 
-@available(iOS 15.0, macOS 9999, *)
 extension NetworkRouter: ReachabilityDelegate {
     func reachabiltyStatusChange(reachabilityStatus status: ReachabiltyStatus) {
         let notificationCenter = NotificationCenter.default

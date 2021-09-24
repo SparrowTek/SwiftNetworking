@@ -8,12 +8,10 @@
 import Foundation
 @testable import Networking
 
-@available(iOS 15.0, macOS 9999, *)
 public enum TestAPI {
     case getTest(id: Int)
 }
 
-@available(iOS 15.0, macOS 9999, *)
 extension TestAPI: EndpointType {
     static let baseURLPath = "http://www.google.com"
     

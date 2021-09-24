@@ -6,7 +6,6 @@
 //  Copyright © 2020 Barstool Sports. All rights reserved.
 //
 
-@available(iOS 15.0, macOS 9999, *)
 public enum HTTPMethod : String {
     case get = "GET"
     case post = "POST"

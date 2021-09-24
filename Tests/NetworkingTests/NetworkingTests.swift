@@ -1,7 +1,6 @@
 import XCTest
 @testable import Networking
 
-@available(iOS 15.0, macOS 9999, *)
 final class NetworkingTests: XCTestCase {
     
     func testBuildRequest() {
@@ -15,7 +14,6 @@ final class NetworkingTests: XCTestCase {
         }
     }
     
-    @available(iOS 15.0, macOS 10.15, *)
     func testExecute() async throws {
         do {
             let testData = TestObject(stringValue: "testString", intValue: nil, boolValue: nil, dictValue: nil, arrayValue: nil).dataValue
@@ -28,7 +26,6 @@ final class NetworkingTests: XCTestCase {
         }
     }
 
-    @available(iOS 15.0, macOS 10.15, *)
     static var allTests = [
         ("testExecute", testExecute),
         ("testBuildRequest", testBuildRequest),

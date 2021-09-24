@@ -8,7 +8,6 @@
 
 import Foundation
 
-@available(iOS 15.0, macOS 9999, *)
 extension Notification.Name {
     
     // MARK: Reachability

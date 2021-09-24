@@ -8,7 +8,6 @@
 import Foundation
 @testable import Networking
 
-@available(iOS 15.0, macOS 9999, *)
 class MockNetworking: Networking {
     var responseData: Data?
     var urlResponse: URLResponse?

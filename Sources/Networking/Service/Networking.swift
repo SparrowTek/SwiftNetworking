@@ -7,10 +7,8 @@
 
 import Foundation
 
-@available(iOS 15.0, macOS 9999, *)
 public protocol Networking {
     func data(for request: URLRequest, delegate: URLSessionTaskDelegate?) async throws -> (Data, URLResponse)
 }
 
-@available(iOS 15.0, macOS 9999, *)
 extension URLSession: Networking { }

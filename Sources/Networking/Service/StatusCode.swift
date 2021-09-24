@@ -7,7 +7,6 @@
 
 import Foundation
 
-@available(iOS 15.0, macOS 9999, *)
 public enum StatusCode: Int {
     // 1xx
     case continueCode = 100

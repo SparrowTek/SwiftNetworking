@@ -8,7 +8,6 @@
 
 import Foundation
 
-@available(iOS 15.0, macOS 9999, *)
 struct URLParameterEncoder: ParameterEncoder {
     func encode(urlRequest: inout URLRequest, with parameters: Parameters) throws {
         

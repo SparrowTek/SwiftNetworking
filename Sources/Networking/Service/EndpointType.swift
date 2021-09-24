@@ -8,7 +8,6 @@
 
 import Foundation
 
-@available(iOS 15.0, macOS 9999, *)
 public protocol EndpointType {
     var baseURL: URL { get }
     var path: String { get }

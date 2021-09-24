@@ -8,15 +8,12 @@
 
 import Foundation
 
-@available(iOS 15.0, macOS 9999, *)
 public typealias Parameters = [String:Any]
 
-@available(iOS 15.0, macOS 9999, *)
 public protocol ParameterEncoder {
     func encode(urlRequest: inout URLRequest, with parameters: Parameters) throws
 }
 
-@available(iOS 15.0, macOS 9999, *)
 public enum ParameterEncoding {
     
     case urlEncoding(parameters: Parameters)
