@@ -71,27 +71,18 @@ import Combine
 protocol AuthProviding {
     var router: NetworkRouter<AuthAPI> { get }
     
-    func getUser() -> AnyPublisher<User, Never>
+    func getUser() async throws -> User
 }
 
 class AuthProvider: AuthProviding {
     var router: NetworkRouter<AuthAPI>
     
-    init(router: NetworkRouter<AuthAPI>) {
+    init(router: NetworkRouter<AuthAPI> = NetworkRouter<AuthAPI>()) {
         self.router = router
     }
     
-    func getUser() -> AnyPublisher<User, Never> {
-        do {
-            return try router.execute(AuthAPI.getData)
-                .catch { _ in
-                    return Just(User.emptyImplementation())
-                }
-                .eraseToAnyPublisher()
-        } catch {
-            return Just(User.emptyImplementation())
-                .eraseToAnyPublisher()
-        }
+    func getUser() async throws -> User {
+        try await router.execute(AuthAPI.getUser)
     }
 }
 ```
