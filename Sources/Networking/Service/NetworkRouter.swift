@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol NetworkRouterDelegate: AnyObject {
-    func intercept(_ request: inout URLRequest)
+    func intercept(_ request: inout URLRequest) async
 }
 
 
@@ -59,7 +59,7 @@ public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
     /// - Returns: The generic type is returned
     public func execute<T: Decodable>(_ route: Endpoint) async throws -> T {
         guard var request = try? buildRequest(from: route) else { throw NetworkError.encodingFailed }
-        delegate?.intercept(&request)
+        await delegate?.intercept(&request)
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         NetworkLogger.log(request: request)
