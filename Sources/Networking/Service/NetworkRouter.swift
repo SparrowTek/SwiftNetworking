@@ -41,8 +41,9 @@ public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
     let networking: Networking
     let reachability: Reachability
     let urlSessionTaskDelegate: URLSessionTaskDelegate?
+    var decoder: JSONDecoder
     
-    public init(networking: Networking? = nil, urlSessionDelegate: URLSessionDelegate? = nil, urlSessionTaskDelegate: URLSessionTaskDelegate? = nil) {
+    public init(networking: Networking? = nil, urlSessionDelegate: URLSessionDelegate? = nil, urlSessionTaskDelegate: URLSessionTaskDelegate? = nil, decoder: JSONDecoder? = nil) {
         if let networking = networking {
             self.networking = networking
         } else {
@@ -50,6 +51,14 @@ public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
         }
         
         self.urlSessionTaskDelegate = urlSessionTaskDelegate
+        
+        if let decoder = decoder {
+            self.decoder = decoder
+        } else {
+            self.decoder = JSONDecoder()
+            self.decoder.keyDecodingStrategy = .convertFromSnakeCase
+        }
+        
         reachability = Reachability()
         reachability.delegate = self
     }
@@ -60,8 +69,6 @@ public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
     public func execute<T: Decodable>(_ route: Endpoint) async throws -> T {
         guard var request = try? buildRequest(from: route) else { throw NetworkError.encodingFailed }
         await delegate?.intercept(&request)
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
         NetworkLogger.log(request: request)
         
         let (data, response) = try await networking.data(for: request, delegate: urlSessionTaskDelegate)
