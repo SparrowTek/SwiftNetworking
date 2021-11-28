@@ -5,6 +5,7 @@
 ## Build generated
 build/
 DerivedData/
+.swiftpm/xcode/package.xcworkspace
 
 ## Various settings
 *.pbxuser
