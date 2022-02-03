@@ -37,9 +37,14 @@ struct NetworkLogger {
         log(logOutput)
     }
     
-    static func log(data: Data?, response: URLResponse?) {
+    static func log(data: Data?, response: URLResponse?, error: Error?) {
         log("\n - - - - - - - - - - INCOMING - - - - - - - - - - \n")
         defer { log("\n - - - - - - - - - -  END INCOMING - - - - - - - - - - \n") }
+        
+        guard error == nil else {
+            log("Error \(String(describing: error))")
+            return
+        }
         
         guard let response = response else {
             log("URLResponse is NIL")

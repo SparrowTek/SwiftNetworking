@@ -72,7 +72,6 @@ public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
         NetworkLogger.log(request: request)
         
         let (data, response) = try await networking.data(for: request, delegate: urlSessionTaskDelegate)
-        NetworkLogger.log(data: data, response: response)
         guard let httpResponse = response as? HTTPURLResponse else { throw NetworkError.noStatusCode }
         switch httpResponse.statusCode {
         case 200...299:
