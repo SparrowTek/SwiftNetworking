@@ -18,6 +18,7 @@ public enum ParameterEncoding {
     
     case urlEncoding(parameters: Parameters)
     case jsonEncoding(parameters: Parameters)
+    case jsonDataEncoding(data: Data?)
     case urlAndJsonEncoding(urlParameters: Parameters, bodyParameters: Parameters)
     
     public func encode(urlRequest: inout URLRequest) throws {
@@ -27,6 +28,8 @@ public enum ParameterEncoding {
                 try URLParameterEncoder().encode(urlRequest: &urlRequest, with: parameters)
             case .jsonEncoding(let parameters):
                 try JSONParameterEncoder().encode(urlRequest: &urlRequest, with: parameters)
+            case .jsonDataEncoding(let data):
+                JSONParameterEncoder().encode(urlRequest: &urlRequest, with: data)
             case .urlAndJsonEncoding(let urlParameters, let bodyParameters):
                 try URLParameterEncoder().encode(urlRequest: &urlRequest, with: urlParameters)
                 try JSONParameterEncoder().encode(urlRequest: &urlRequest, with: bodyParameters)

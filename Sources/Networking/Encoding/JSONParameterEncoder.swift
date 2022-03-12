@@ -12,12 +12,17 @@ struct JSONParameterEncoder: ParameterEncoder {
     func encode(urlRequest: inout URLRequest, with parameters: Parameters) throws {
         do {
             let jsonAsData = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
-            urlRequest.httpBody = jsonAsData
-            if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
-                urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            }
-        }catch {
+            encode(urlRequest: &urlRequest, with: jsonAsData)
+        } catch {
             throw NetworkError.encodingFailed
+        }
+    }
+    
+    func encode(urlRequest: inout URLRequest, with data: Data?) {
+        urlRequest.httpBody = data
+        
+        if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         }
     }
 }

@@ -17,7 +17,7 @@ struct URLParameterEncoder: ParameterEncoder {
         case noBrackets
         /// Brackets containing the item index are appended. This matches the jQuery and Node.js behavior.
         case indexInBrackets
-        
+
         func encode(key: String, atIndex index: Int) -> String {
             switch self {
             case .brackets:
@@ -29,14 +29,14 @@ struct URLParameterEncoder: ParameterEncoder {
             }
         }
     }
-    
+
     /// Configures how `Bool` parameters are encoded.
     public enum BoolEncoding {
         /// Encode `true` as `1` and `false` as `0`. This is the default behavior.
         case numeric
         /// Encode `true` and `false` as string literals.
         case literal
-        
+
         func encode(value: Bool) -> String {
             switch self {
             case .numeric:
@@ -49,7 +49,7 @@ struct URLParameterEncoder: ParameterEncoder {
     
     /// The encoding to use for `Array` parameters.
     public let arrayEncoding: ArrayEncoding
-    
+
     /// The encoding to use for `Bool` parameters.
     public let boolEncoding: BoolEncoding
     
@@ -121,7 +121,7 @@ struct URLParameterEncoder: ParameterEncoder {
     ///
     /// - Returns:          The percent-escaped `String`.
     public func escape(_ string: String) -> String {
-        string.addingPercentEncoding(withAllowedCharacters: .stURLQueryAllowed) ?? string
+        string.addingPercentEncoding(withAllowedCharacters: .javascriptURLAllowed) ?? string
     }
 }
 
