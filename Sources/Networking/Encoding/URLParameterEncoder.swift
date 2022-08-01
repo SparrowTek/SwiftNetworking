@@ -53,9 +53,13 @@ struct URLParameterEncoder: ParameterEncoder {
     /// The encoding to use for `Bool` parameters.
     public let boolEncoding: BoolEncoding
     
-    init(arrayEncoding: ArrayEncoding = .brackets, boolEncoding: BoolEncoding = .numeric) {
+    /// The character set tp use for escaping
+    public let characterSet: CharacterSet
+    
+    init(arrayEncoding: ArrayEncoding = .brackets, boolEncoding: BoolEncoding = .numeric, characterSet: CharacterSet = .stURLQueryAllowed) {
         self.arrayEncoding = arrayEncoding
         self.boolEncoding = boolEncoding
+        self.characterSet = characterSet
     }
     
     func encode(urlRequest: inout URLRequest, with parameters: Parameters) throws {
@@ -121,7 +125,7 @@ struct URLParameterEncoder: ParameterEncoder {
     ///
     /// - Returns:          The percent-escaped `String`.
     public func escape(_ string: String) -> String {
-        string.addingPercentEncoding(withAllowedCharacters: .javascriptURLAllowed) ?? string
+        string.addingPercentEncoding(withAllowedCharacters: characterSet) ?? string
     }
 }
 
