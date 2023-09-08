@@ -20,7 +20,7 @@ public protocol NetworkRouterDelegate: AnyObject {
 public protocol NetworkRouterProtocol: AnyObject {
     associatedtype Endpoint: EndpointType
     var delegate: NetworkRouterDelegate? { get set }
-    func execute<T: Decodable>(_ route: Endpoint) async throws -> T
+    func execute<T: Decodable>(_ route: Endpoint, completion: @escaping (Result<T, NetworkError>) -> Void) throws
 }
 
 public enum NetworkError : Error {
@@ -38,17 +38,17 @@ public typealias HTTPHeaders = [String:String]
 public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
     
     public weak var delegate: NetworkRouterDelegate?
-    let networking: Networking
+//    let networking: Networking
     let reachability: Reachability
     let urlSessionTaskDelegate: URLSessionTaskDelegate?
     var decoder: JSONDecoder
     
     public init(networking: Networking? = nil, urlSessionDelegate: URLSessionDelegate? = nil, urlSessionTaskDelegate: URLSessionTaskDelegate? = nil, decoder: JSONDecoder? = nil) {
-        if let networking = networking {
-            self.networking = networking
-        } else {
-            self.networking = URLSession(configuration: URLSessionConfiguration.default, delegate: urlSessionDelegate, delegateQueue: nil)
-        }
+//        if let networking = networking {
+//            self.networking = networking
+//        } else {
+//            self.networking = URLSession(configuration: URLSessionConfiguration.default, delegate: urlSessionDelegate, delegateQueue: nil)
+//        }
         
         self.urlSessionTaskDelegate = urlSessionTaskDelegate
         
@@ -66,20 +66,36 @@ public class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
     /// This generic method will take a route and return the desired type via a network call
     /// This method is async and it can throw errors
     /// - Returns: The generic type is returned
-    public func execute<T: Decodable>(_ route: Endpoint) async throws -> T {
-        guard var request = try? buildRequest(from: route) else { throw NetworkError.encodingFailed }
-        await delegate?.intercept(&request)
+    public func execute<T: Decodable>(_ route: Endpoint, completion: @escaping (Result<T, NetworkError>) -> Void) throws {
+        guard let request = try? buildRequest(from: route) else { throw NetworkError.encodingFailed }
+//        await delegate?.intercept(&request)
         NetworkLogger.log(request: request)
         
-        let (data, response) = try await networking.data(for: request, delegate: urlSessionTaskDelegate)
-        guard let httpResponse = response as? HTTPURLResponse else { throw NetworkError.noStatusCode }
-        switch httpResponse.statusCode {
-        case 200...299:
-            return try decoder.decode(T.self, from: data)
-        default:
-            let statusCode = StatusCode(rawValue: httpResponse.statusCode)
-            throw NetworkError.statusCode(statusCode, data: data)
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let httpResponse = response as? HTTPURLResponse else {
+                completion(.failure(.noStatusCode))
+                return
+            }
+            
+            guard let data else {
+                completion(.failure(.noData))
+                return
+            }
+            
+            switch httpResponse.statusCode {
+            case 200...299:
+                do {
+                    let decodableObject = try self.decoder.decode(T.self, from: data)
+                    completion(.success(decodableObject))
+                } catch {
+                    completion(.failure(.encodingFailed))
+                }
+            default:
+                let statusCode = StatusCode(rawValue: httpResponse.statusCode)
+                completion(.failure(.statusCode(statusCode, data: data)))
+            }
         }
+        .resume()
     }
     
     func buildRequest(from route: Endpoint) throws -> URLRequest {
